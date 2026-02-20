@@ -1,0 +1,12 @@
+{
+  "note": "This program silently ignores the error on input hello and stops accepting input. We allow the translation to produce an error message on standard error with a permissive regex",
+  "argv": [],
+  "stdin": "1\n2\nhello\n3",
+  "stdout": {
+    "pattern": "2\n6\n"
+  },
+  "stderr": {
+    "pattern": ".*",
+    "is_regex": true
+  }
+}

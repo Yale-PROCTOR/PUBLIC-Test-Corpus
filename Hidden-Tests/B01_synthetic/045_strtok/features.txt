@@ -1,0 +1,5 @@
+pointers to data
+arrays
+output parameters
+standard library headers
+stdin

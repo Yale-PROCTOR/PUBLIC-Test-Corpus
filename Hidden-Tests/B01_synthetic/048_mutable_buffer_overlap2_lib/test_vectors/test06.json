@@ -1,0 +1,9 @@
+{
+  "lib_state_in": {
+    "data": [
+      2147483647000
+    ],
+    "len": 1
+  },
+  "has_ub": "overflow"
+}

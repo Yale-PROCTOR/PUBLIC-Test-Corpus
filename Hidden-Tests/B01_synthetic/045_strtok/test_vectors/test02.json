@@ -1,0 +1,7 @@
+{
+  "argv": [],
+  "stdin": "ab::cd/e_f\n/g h\nij:",
+  "stdout": {
+    "pattern": "line ab\nline cd\nline e_f\nline g h\nline ij\n"
+  }
+}

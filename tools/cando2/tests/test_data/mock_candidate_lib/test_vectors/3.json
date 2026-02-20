@@ -1,0 +1,12 @@
+{
+	"lib_state_in": {
+		"a": 4,
+		"b": 5,
+		"returns": 0
+        },
+        "lib_state_out": {
+		"a": 4,
+		"b": 5,
+		"returns": 42
+        }
+}

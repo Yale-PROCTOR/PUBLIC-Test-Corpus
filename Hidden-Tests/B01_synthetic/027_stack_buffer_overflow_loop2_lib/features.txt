@@ -1,0 +1,5 @@
+pointers to data
+arrays
+standard library headers
+library functions
+buggy code

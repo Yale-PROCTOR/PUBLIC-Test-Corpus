@@ -1,0 +1,11 @@
+{
+  "rc": 1,
+  "note": "Errors on call to pow(), but handled by setting and checking errno",
+  "argv": [
+    "0",
+    "-1"
+  ],
+  "stderr": {
+    "pattern": "Range error: pow(0.00, -1.00) caused overflow or underflow.\n"
+  }
+}

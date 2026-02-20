@@ -1,0 +1,99 @@
+# © 2026 Massachusetts Institute of Technology
+# MIT License
+
+name: Run CI
+# TODO hmak Hard code default in better way
+run-name: Run CI on ${{inputs.test_dir || 'All-Tests'}}
+
+on:
+  # Trigger workflow on Public-Tests on PR changes
+  pull_request:
+    # on PR merge to main/etc
+    branches:
+      - main
+      - B02
+      - "releases/**"
+    # NB: Following are the default PR events [when "types" is omitted]
+    # re: https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request
+    # types: [opened, synchronize, reopened]
+
+  # Trigger workflow from manual "Run workflow" button
+  workflow_dispatch:
+    inputs:
+      test_dir:
+        description: Which tests to run
+        type: choice
+        required: true
+        # TODO hmak Hard code default in better way
+        default: All-Tests # Make sure this matches env.TEST_DIR
+        options:
+          - Public-Tests
+          - Hidden-Tests
+          - All-Tests
+      fail_immediately:
+        description: Stop immediately after a failed test
+        type: boolean
+        default: false
+      test_results_file:
+        description: Where to output test results to
+        default: junit.xml # Make sure this matches env.TEST_RESULTS_FILE
+
+env:
+  # TODO hmak Hard code default in better way
+  TEST_DIR: ${{inputs.test_dir || 'All-Tests'}}
+  TEST_RESULTS_FILE: ${{inputs.test_results_file || 'junit.xml'}}
+
+# Debounce tests when there are back-to-back commits to the same branch
+# re: https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency
+concurrency:
+  group: ${{github.ref}}
+  cancel-in-progress: true
+
+jobs:
+  verify-c-tests:
+    # TODO hmak Hard code default in better way
+    name: "${{inputs.test_dir || 'All-Tests'}}: Verify test vectors running C code"
+    # TODO hmak Provision buildchain tools on-the-fly? (using GitHub action or Docker?)
+    runs-on: [python, ninja, cmake, cargo]
+    steps:
+      - uses: actions/checkout@v4
+      #   with:
+      #       submodules: true
+      #       token: ${{ secrets.GITHUB_TOKEN }}
+      #       # Bletch to personal access token :(
+      #       # re: https://github.com/actions/checkout/issues/2080
+      #       token: ${{secrets.GIT_EXTERNAL_PERSONAL_ACCESS_TOKEN}}
+      # FIXME hmak Make submodule changes [reused workflow](https://docs.github.com/en/actions/how-tos/reuse-automations/reuse-workflows)
+      # FIXME hmak Don't use classic Personal Access Token for cross repo submodule access
+      - name: Fetch submodules
+        run: |
+          # git submodule update --init --recursive --depth=1
+          git submodule init
+          git config --local submodule.Hidden-Tests.url "https://${{vars.GIT_INTERNAL_USER}}:${{secrets.GIT_INTERNAL_PERSONAL_ACCESS_TOKEN}}@llcad-github.llan.ll.mit.edu/TRACTOR/Hidden-Tests.git"
+          git submodule update --depth=1 Hidden-Tests
+
+      - name: Run the CI script on ${{env.TEST_DIR}}
+        run: |
+          RUN_TEST_OPTS=
+          if [ "${{env.TEST_DIR}}" != "All-Tests" ]; then
+            RUN_TEST_OPTS="--subset ${{env.TEST_DIR}}"
+          fi
+          # Always use --verbose so that junit.xml contains more test failure details
+          ./deployment/scripts/github-actions/run_ci.sh $RUN_TEST_OPTS --junit-xml ${{env.TEST_RESULTS_FILE}} ${{inputs.fail_immediately && '' || '--keep-going'}} --verbose
+      # Make test results downloadable from workflow
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: ${{env.TEST_RESULTS_FILE}}
+        if: ${{! cancelled()}}
+      # FIXME hmak Replace custom action with: mikepenz/action-junit-report@v4
+      # Handle JUnit test failures (i.e., fail the CI)
+      - name: Handle JUnit test failures
+        uses: ./.github/actions/report-junit-results
+        with:
+          report_path: ${{env.TEST_RESULTS_FILE}}
+      # - name: Report test results
+      #   uses: mikepenz/action-junit-report@v4
+      #   with:
+      #       report_paths: "junit.xml"

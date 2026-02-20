@@ -1,0 +1,5 @@
+# © 2026 Massachusetts Institute of Technology
+# MIT License
+
+[toolchain]
+channel = "nightly-2025-11-11"

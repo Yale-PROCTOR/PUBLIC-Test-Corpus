@@ -1,0 +1,22 @@
+# © 2026 Massachusetts Institute of Technology
+# MIT License
+
+name: "Handle JUnit test failures"
+description: "Handle JUnit test failures (i.e., fail the CI)"
+inputs:
+  report_path:
+    description: "Path to XML file"
+    required: false
+    default: "junit.xml"
+outputs:
+  failed:
+    description: "The count of all failed tests (compiled but run failed)"
+  errored:
+    description: "The count of all tests that errored (e.g., could not compile)"
+  skipped:
+    description: "The count of all skipped tests"
+  passed:
+    description: "The count of all passing tests"
+runs:
+  using: "node20"
+  main: "index.js"

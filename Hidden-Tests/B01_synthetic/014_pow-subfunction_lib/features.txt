@@ -1,0 +1,5 @@
+global variables
+error handling
+error handling (errno.h)
+standard library headers
+library functions

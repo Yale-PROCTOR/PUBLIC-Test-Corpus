@@ -1,0 +1,4 @@
+standard library headers
+library functions
+static variables
+hard

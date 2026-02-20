@@ -1,0 +1,4 @@
+standard library headers
+pointers to data
+static variables
+error handling

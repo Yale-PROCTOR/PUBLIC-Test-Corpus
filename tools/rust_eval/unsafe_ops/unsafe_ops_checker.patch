@@ -1,0 +1,25 @@
+diff --git a/compiler/rustc_mir_build/src/check_unsafety.rs b/compiler/rustc_mir_build/src/check_unsafety.rs
+index 4a20b05d1fc..6ae6bfd5531 100644
+--- a/compiler/rustc_mir_build/src/check_unsafety.rs
++++ b/compiler/rustc_mir_build/src/check_unsafety.rs
+@@ -147,6 +147,11 @@ fn emit_deprecated_safe_fn_call(&self, span: Span, kind: &UnsafeOpKind) -> bool
+     }
+ 
+     fn requires_unsafe(&mut self, span: Span, kind: UnsafeOpKind) {
++        if std::env::var("TRACTOR_UNSAFE_OPS").is_ok() {
++            let kindstr = format!("{kind:?}").replace("\"", "'");
++            let spanstr = format!("{span:?}").replace("\"", "'");
++            println!("TRACTOR_UNSAFE_OPS {{\"kind\": \"{kindstr}\", \"span\": \"{spanstr}\"}}");
++        }
+         let unsafe_op_in_unsafe_fn_allowed = self.unsafe_op_in_unsafe_fn_allowed();
+         match self.safety_context {
+             SafetyContext::BuiltinUnsafeBlock => {}
+@@ -737,7 +742,7 @@ struct UnusedUnsafeWarning {
+     enclosing_unsafe: Option<UnusedUnsafeEnclosing>,
+ }
+ 
+-#[derive(Clone, PartialEq)]
++#[derive(Clone, PartialEq, Debug)]
+ enum UnsafeOpKind {
+     CallToUnsafeFunction(Option<DefId>),
+     UseOfInlineAssembly,

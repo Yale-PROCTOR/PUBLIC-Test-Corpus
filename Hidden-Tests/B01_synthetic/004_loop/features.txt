@@ -1,0 +1,4 @@
+standard library headers
+pointers to data
+output parameters
+error handling

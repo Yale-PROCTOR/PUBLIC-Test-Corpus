@@ -1,0 +1,8 @@
+pointers to data
+arrays
+global variables
+output parameters
+error handling
+error handling (errno.h)
+standard library headers
+long runtime
