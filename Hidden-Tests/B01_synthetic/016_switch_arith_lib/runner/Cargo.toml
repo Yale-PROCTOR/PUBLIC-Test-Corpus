@@ -2,7 +2,7 @@
 # MIT License
 
 [package]
-name = "_014_pow-subfunction_lib_runner"
+name = "_016_switch_arith_lib_runner"
 version = "0.1.0"
 edition = "2024"
 

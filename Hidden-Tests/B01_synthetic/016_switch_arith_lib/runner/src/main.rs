@@ -9,7 +9,7 @@ harness! {
     state: {
         seed: c_uint
     },
-    library: "switch-arith",
+    library: "switch_arith",
     symbol: "switch_arith",
 
     signature: unsafe extern "C" fn(c_uint),
