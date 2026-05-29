@@ -12,7 +12,7 @@ struct tflac {
     tflac_u32 subframe_bitdepth;
     tflac_u8 constant;
     tflac_u64 residual_errors[5];
-    tflac_s32 residuals[5];
+    tflac_s32 residuals[6];
 };
 typedef struct tflac tflac;
 
